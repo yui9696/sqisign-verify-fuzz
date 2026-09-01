@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sqisign-verify-fuzz"
+version = "0.1.0"
+description = "AddressSanitizer verification-robustness fuzz harness for SQIsign (independent reproduction of open upstream issue #23)."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Moe Tabei", email = "tabei@ryun.jp" }]
+keywords = ["sqisign", "isogeny", "fuzzing", "addresssanitizer", "post-quantum", "robustness"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Security",
+    "Topic :: Software Development :: Testing",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[project.urls]
+Homepage = "https://github.com/yui9696/sqisign-verify-fuzz"
+Issues = "https://github.com/yui9696/sqisign-verify-fuzz/issues"
+
+[project.scripts]
+sqisign-verify-fuzz = "sqfuzz.cli:main"
+
+[tool.setuptools]
+packages = ["sqfuzz"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

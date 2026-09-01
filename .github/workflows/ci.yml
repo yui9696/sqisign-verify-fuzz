@@ -1,0 +1,32 @@
+name: ci
+
+# The test suite runs entirely against a pure-Python stub runner that models
+# the reference verifier's length behaviour. CI does NOT build the C reference
+# and does NOT use AddressSanitizer — those are only needed to regenerate the
+# committed results against your own reference checkout (see the README).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install (dev)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+      - name: Run tests
+        env:
+          PYTHONPATH: .
+        run: pytest -q

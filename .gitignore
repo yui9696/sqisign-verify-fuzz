@@ -1,0 +1,24 @@
+# Reference source + build artifacts (never committed — cloned by harness/build.sh)
+harness/the-sqisign/
+harness/build/
+*.dSYM/
+
+# Do NOT commit reference-derived material
+KAT/
+*.rsp
+*.req
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+
+# pytest / tooling
+.pytest_cache/
+.coverage
+htmlcov/

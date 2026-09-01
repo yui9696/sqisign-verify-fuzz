@@ -1,0 +1,47 @@
+sqisign-verify-fuzz
+Copyright (c) 2026 Moe Tabei
+Licensed under the MIT License (see LICENSE).
+
+This project is a testing harness that drives the SQIsign reference
+implementation as an external oracle. It does NOT vendor, copy, or redistribute
+the reference source, its Known Answer Test (KAT) vectors, or any compiled
+artifact. The user supplies their own reference checkout.
+
+--------------------------------------------------------------------------------
+Upstream reference implementation (not included here)
+--------------------------------------------------------------------------------
+The SQIsign reference implementation is Copyright 2023-2025 the SQIsign team and
+licensed under the Apache License, Version 2.0. This harness is written against
+commit:
+
+    dd133d7aca576c361a270c8e6434832535b42ecc   (github.com/SQISign/the-sqisign)
+
+harness/build.sh clones that repository and builds it under AddressSanitizer;
+the reference source and its libraries are never committed to this repository.
+
+--------------------------------------------------------------------------------
+KAT-derived material
+--------------------------------------------------------------------------------
+The seed corpus is derived at run time from the reference's KAT .rsp files, which
+are Apache-2.0 material owned by the SQIsign team and are NOT redistributed here.
+For provenance, the SHA-256 digests of the KAT files used to produce the
+committed results (from commit dd133d7) are:
+
+  03898a4b415c0fd038137b1e5716be07ea7641622161aef0777035a96fc9bba8
+      KAT/PQCsignKAT_353_SQIsign_lvl1.rsp
+  073b6fa0e7792267965306f8cccded420b9c2d4719d49295d31041c194fd9526
+      KAT/PQCsignKAT_529_SQIsign_lvl3.rsp
+  2509ecc191791385968a36db50d8479c87d3e1b8bd655150f927f1f5613f2546
+      KAT/PQCsignKAT_701_SQIsign_lvl5.rsp
+
+--------------------------------------------------------------------------------
+Prior art and independent reproduction
+--------------------------------------------------------------------------------
+The memory-safety behaviour reproduced here (undersized-signature heap
+out-of-bounds read in the verifier's fixed-size decode) was first reported by
+TheDarkLightX in the MIT-licensed repository sqisign-verification-boundary and
+is tracked as the OPEN upstream issue #23 (opened 2026-08-13), which the SQIsign
+team has acknowledged and scheduled a fix for in the round-3 release. This
+project independently reproduces that already-public issue and provides the fuzz
+tooling requested in upstream issue #15. It is not a new discovery or a
+vulnerability disclosure.
