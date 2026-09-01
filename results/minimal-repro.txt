@@ -1,0 +1,74 @@
+SQIsign verification robustness — minimal undersized reproducer
+
+This is an INDEPENDENT REPRODUCTION of the already-open, team-acknowledged
+upstream issue #23 (heap out-of-bounds READ when the verifier fixed-size-
+decodes a signature shorter than CRYPTO_BYTES). It is NOT a vulnerability
+disclosure, NOT a 0-day, NOT an exploit. The reference is explicitly not
+production-ready (upstream issue #3) and not constant-time (spec §7).
+
+level            : lvl1
+CRYPTO_BYTES     : 148
+reproducer length: 100 bytes (a 100-byte prefix of a valid signature)
+buffer ends in   : field mat[1][0]
+crash source     : encode_verification.c:207
+access / size    : READ / 16
+verify_one exit  : -6
+
+input (hex):
+  pk  = 07CCD21425136F6E865E497D2D4D208F0054AD81372066E817480787AAF7B2029550C89E892D618CE3230F23510BFBE68FCCDDAEA51DB1436B462ADFAF008A010B
+  msg = D81C4D8D734FCBFBEADE3D3F8A039FAA2A2C9957E835AD55B22E75BF57BB556AC8
+  sig = 84228651f271b0f39f2f19f2e8718f31ed3365ac9e5cb303afe663d0cfc11f0455d891b0ca6c7e653f9ba2667730bb77befe1b1a31828404284af8fd7baacc010001d974b5ca671ff65708d8b462a5a84a1443ee9b5fed7218767c9d85ceed04db0a69a2
+
+verbatim AddressSanitizer report:
+------------------------------------------------------------------------
+=================================================================
+==10016==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x60b0000000a4 at pc 0x0001048571fc bp 0x00016bdd2060 sp 0x00016bdd1810
+READ of size 16 at 0x60b0000000a4 thread T0
+    #0 0x0001048571f8 in __asan_memcpy+0x400 (libclang_rt.asan_osx_dynamic.dylib:arm64e+0x3b1f8)
+    #1 0x000104032824 in sqisign_lvl1_ref_signature_from_bytes encode_verification.c:207
+    #2 0x00010402e1d0 in sqisign_lvl1_ref_sqisign_verify sqisign.c:101
+    #3 0x00010402d1f8 in run verify_one.c:63
+    #4 0x00010402cb40 in main verify_one.c:73
+    #5 0x00019968dd50  (<unknown module>)
+
+0x60b0000000a4 is located 0 bytes after 100-byte region [0x60b000000040,0x60b0000000a4)
+allocated by thread T0 here:
+    #0 0x000104859330 in malloc+0x78 (libclang_rt.asan_osx_dynamic.dylib:arm64e+0x3d330)
+    #1 0x00010402d658 in hex2bin verify_one.c:38
+    #2 0x00010402d108 in run verify_one.c:52
+    #3 0x00010402cb40 in main verify_one.c:73
+    #4 0x00019968dd50  (<unknown module>)
+
+SUMMARY: AddressSanitizer: heap-buffer-overflow encode_verification.c:207 in sqisign_lvl1_ref_signature_from_bytes
+Shadow bytes around the buggy address:
+  0x60affffffe00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x60affffffe80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x60afffffff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x60afffffff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x60b000000000: fa fa fa fa fa fa fa fa 00 00 00 00 00 00 00 00
+=>0x60b000000080: 00 00 00 00[04]fa fa fa fa fa fa fa fa fa fa fa
+  0x60b000000100: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x60b000000180: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x60b000000200: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x60b000000280: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x60b000000300: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==10016==ABORTING

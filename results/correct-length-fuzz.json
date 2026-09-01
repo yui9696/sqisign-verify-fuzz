@@ -1,0 +1,116 @@
+{
+  "lvl1": {
+    "level": "lvl1",
+    "crypto_bytes": 148,
+    "seed": 0,
+    "n_each": 2000,
+    "kat_record": 0,
+    "binary": "verify_one_lvl1",
+    "strategies": {
+      "random": {
+        "accept": 0,
+        "reject": 2000,
+        "asan_crash": 0,
+        "error": 0,
+        "n": 2000
+      },
+      "mat_entry": {
+        "accept": 0,
+        "reject": 2000,
+        "asan_crash": 0,
+        "error": 0,
+        "n": 2000
+      },
+      "e_aux": {
+        "accept": 0,
+        "reject": 2000,
+        "asan_crash": 0,
+        "error": 0,
+        "n": 2000
+      }
+    },
+    "totals": {
+      "n": 6000,
+      "accept": 0,
+      "reject": 6000,
+      "asan_crash": 0,
+      "error": 0
+    }
+  },
+  "lvl3": {
+    "level": "lvl3",
+    "crypto_bytes": 224,
+    "seed": 0,
+    "n_each": 1000,
+    "kat_record": 0,
+    "binary": "verify_one_lvl3",
+    "strategies": {
+      "random": {
+        "accept": 0,
+        "reject": 1000,
+        "asan_crash": 0,
+        "error": 0,
+        "n": 1000
+      },
+      "mat_entry": {
+        "accept": 0,
+        "reject": 1000,
+        "asan_crash": 0,
+        "error": 0,
+        "n": 1000
+      },
+      "e_aux": {
+        "accept": 0,
+        "reject": 1000,
+        "asan_crash": 0,
+        "error": 0,
+        "n": 1000
+      }
+    },
+    "totals": {
+      "n": 3000,
+      "accept": 0,
+      "reject": 3000,
+      "asan_crash": 0,
+      "error": 0
+    }
+  },
+  "lvl5": {
+    "level": "lvl5",
+    "crypto_bytes": 292,
+    "seed": 0,
+    "n_each": 1000,
+    "kat_record": 0,
+    "binary": "verify_one_lvl5",
+    "strategies": {
+      "random": {
+        "accept": 0,
+        "reject": 1000,
+        "asan_crash": 0,
+        "error": 0,
+        "n": 1000
+      },
+      "mat_entry": {
+        "accept": 0,
+        "reject": 1000,
+        "asan_crash": 0,
+        "error": 0,
+        "n": 1000
+      },
+      "e_aux": {
+        "accept": 0,
+        "reject": 1000,
+        "asan_crash": 0,
+        "error": 0,
+        "n": 1000
+      }
+    },
+    "totals": {
+      "n": 3000,
+      "accept": 0,
+      "reject": 3000,
+      "asan_crash": 0,
+      "error": 0
+    }
+  }
+}
