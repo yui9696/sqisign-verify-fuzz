@@ -104,12 +104,38 @@ verification logic, which robustly rejects malformed data. (See
 
 ---
 
-## Mitigation
+## Mitigation — and it shipped
 
 The fix is a **length check before the fixed-size decode**: reject when
 `siglen != CRYPTO_BYTES` (rejecting `siglen < CRYPTO_BYTES` removes the
 out-of-bounds read; requiring exact equality also removes the trailing-byte
-malleability). The SQIsign team has stated this is coming in the round-3 release.
+malleability). The SQIsign team stated this was coming in the round-3 release.
+
+**It did.** Round 3 (2026-09-01, `6d01770`, tag `nist-v3`) has exactly that, in
+`src/sqisign.c`, ahead of `signature_from_bytes` in both entry points:
+
+```c
+sqisign_verify(...)   if (siglen != SIGNATURE_BYTES)  return -1;
+sqisign_open(...)     if (smlen  <  SIGNATURE_BYTES)  { *mlen = 0; return -1; }
+```
+
+Measured against it (ref build, macOS 26.1 / Apple Silicon, 100 KAT vectors per parameter
+set, all three sets): **4200 negative cases — undersized by 1/2/16/64 bytes, declared
+length past the buffer, bytes appended — none accepted**, every valid vector still
+accepted, and under `CMAKE_BUILD_TYPE=ASAN` **zero AddressSanitizer findings**.
+
+Rebuilding the identical round-3 tree with only the `sqisign_verify` length check
+compiled out brings the original behaviour straight back:
+
+```
+ERROR: AddressSanitizer: heap-buffer-overflow
+READ of size 16
+    #1 sqisign_p324_3_ref_signature_from_bytes
+    #2 sqisign_p324_3_ref_sqisign_verify
+```
+
+so the shipped guard is what closes it, rather than something downstream happening to
+fail first. Reported upstream on issue #23; data and harness in `sqisign-round3-lab`.
 
 ---
 
